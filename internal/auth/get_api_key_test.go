@@ -5,9 +5,8 @@ import (
 	"testing"
 )
 
-
 func TestGetApiKeyNoAuth(t *testing.T) {
-	header	:= make(http.Header)
+	header := make(http.Header)
 	header.Set("Key", "nothing")
 
 	got, err := GetAPIKey(header)
@@ -20,7 +19,7 @@ func TestGetApiKeyNoAuth(t *testing.T) {
 }
 
 func TestGetApiKeyWrongAuthLength(t *testing.T) {
-	header	:= make(http.Header)
+	header := make(http.Header)
 	header.Set("Authorization", "short")
 
 	got, err := GetAPIKey(header)
@@ -33,7 +32,7 @@ func TestGetApiKeyWrongAuthLength(t *testing.T) {
 }
 
 func TestGetApiKeyNoApiKeyProvided(t *testing.T) {
-	header	:= make(http.Header)
+	header := make(http.Header)
 	header.Set("Authorization", "aseotu : hasecuhasoetuh")
 
 	got, err := GetAPIKey(header)
@@ -43,19 +42,19 @@ func TestGetApiKeyNoApiKeyProvided(t *testing.T) {
 	if err.Error() != "malformed authorization header" {
 		t.Fatal("Error was expected")
 	}
-	
+
 }
 
 func TestGetApiKeyCorrectHeader(t *testing.T) {
-	header	:= make(http.Header)
+	header := make(http.Header)
 	header.Set("Authorization", "ApiKey super-secret-api-key")
 
 	got, err := GetAPIKey(header)
-	
+
 	if got != "super-secret-api-key" {
 		t.Fatal("Api key doesn't match")
 	}
-	if err != nil{
+	if err != nil {
 		t.Fatal("error should be nil")
 	}
 }
