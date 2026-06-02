@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -17,9 +19,7 @@ import (
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-type apiConfig struct {
-	DB *database.Queries
-}
+type apiConfig struct{ DB *database.Queries }
 
 //go:embed static/*
 var staticFiles embed.FS
@@ -89,10 +89,16 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
-		Addr:    ":" + port,
-		Handler: router,
+		ReadHeaderTimeout: 10 * time.Second,
+		Addr:              ":" + port,
+		Handler:           router,
 	}
 
-	log.Printf("Serving on port: %s\n", port)
+	p, err := strconv.Atoi(port)
+	if err != nil || p < 1 || p > 65535 {
+		log.Fatalf("Invalid port: %q", p)
+	}
+
+	log.Printf("Serving on port: %d\n", p)
 	log.Fatal(srv.ListenAndServe())
 }
